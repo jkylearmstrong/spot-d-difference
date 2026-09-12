@@ -22,20 +22,18 @@ function copyCanvasSize(sourceCanvas, targetCanvas) {
   targetCanvas.height = sourceCanvas.height;
 }
 
+function setCanvasSize(canvas, width, height) {
+  canvas.width = width;
+  canvas.height = height;
+}
+
 function clearCanvas(context, canvas) {
   context.clearRect(0, 0, canvas.width, canvas.height);
 }
 
 function drawImageToCanvas(image, context, canvas) {
   clearCanvas(context, canvas);
-
-  const scale = Math.min(canvas.width / image.width, canvas.height / image.height);
-  const drawWidth = image.width * scale;
-  const drawHeight = image.height * scale;
-  const x = (canvas.width - drawWidth) / 2;
-  const y = (canvas.height - drawHeight) / 2;
-
-  context.drawImage(image, x, y, drawWidth, drawHeight);
+  context.drawImage(image, 0, 0, canvas.width, canvas.height);
 }
 
 function loadImage(file) {
@@ -61,6 +59,11 @@ function compareImages() {
     return;
   }
 
+  const comparisonWidth = Math.max(1, Math.min(loadedImages.left.width, loadedImages.right.width));
+  const comparisonHeight = Math.max(1, Math.min(loadedImages.left.height, loadedImages.right.height));
+
+  setCanvasSize(leftCanvas, comparisonWidth, comparisonHeight);
+  setCanvasSize(rightCanvas, comparisonWidth, comparisonHeight);
   drawImageToCanvas(loadedImages.left, leftContext, leftCanvas);
   drawImageToCanvas(loadedImages.right, rightContext, rightCanvas);
 
@@ -77,9 +80,10 @@ function compareImages() {
     const greenDifference = Math.abs(leftPixels.data[index + 1] - rightPixels.data[index + 1]);
     const blueDifference = Math.abs(leftPixels.data[index + 2] - rightPixels.data[index + 2]);
     const alphaDifference = Math.abs(leftPixels.data[index + 3] - rightPixels.data[index + 3]);
-    const totalDifference = redDifference + greenDifference + blueDifference + alphaDifference;
+    const averageDifference =
+      (redDifference + greenDifference + blueDifference + alphaDifference) / 4;
 
-    if (totalDifference > threshold * 4) {
+    if (averageDifference > threshold) {
       diffPixels.data[index] = 255;
       diffPixels.data[index + 1] = 90;
       diffPixels.data[index + 2] = 90;
