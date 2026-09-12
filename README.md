@@ -4,7 +4,7 @@ A minimal browser app for comparing two similar images and highlighting the chan
 
 ## Usage
 
-1. Open `/home/runner/work/spot-d-difference/spot-d-difference/index.html` in a browser.
+1. Open `index.html` in a browser.
 2. Upload a left image and a right image.
 3. Adjust the threshold slider if needed.
 4. Review the generated diff mask and difference count.

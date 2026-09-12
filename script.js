@@ -17,6 +17,11 @@ const loadedImages = {
   right: null,
 };
 
+function copyCanvasSize(sourceCanvas, targetCanvas) {
+  targetCanvas.width = sourceCanvas.width;
+  targetCanvas.height = sourceCanvas.height;
+}
+
 function clearCanvas(context, canvas) {
   context.clearRect(0, 0, canvas.width, canvas.height);
 }
@@ -59,9 +64,10 @@ function compareImages() {
   drawImageToCanvas(loadedImages.left, leftContext, leftCanvas);
   drawImageToCanvas(loadedImages.right, rightContext, rightCanvas);
 
+  copyCanvasSize(leftCanvas, diffCanvas);
   const leftPixels = leftContext.getImageData(0, 0, leftCanvas.width, leftCanvas.height);
   const rightPixels = rightContext.getImageData(0, 0, rightCanvas.width, rightCanvas.height);
-  const diffPixels = diffContext.createImageData(diffCanvas.width, diffCanvas.height);
+  const diffPixels = diffContext.createImageData(leftPixels.width, leftPixels.height);
 
   const threshold = Number(thresholdInput.value);
   let changedPixels = 0;
@@ -96,6 +102,11 @@ async function handleFileChange(side, event) {
 
   if (!file) {
     loadedImages[side] = null;
+    if (side === "left") {
+      clearCanvas(leftContext, leftCanvas);
+    } else {
+      clearCanvas(rightContext, rightCanvas);
+    }
     clearCanvas(diffContext, diffCanvas);
     updateStatus("Upload two similar images to compare them.");
     return;
