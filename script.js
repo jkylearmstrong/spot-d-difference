@@ -86,8 +86,8 @@ function compareImages() {
     return;
   }
 
-  const comparisonWidth = Math.max(1, Math.max(loadedImages.left.width, loadedImages.right.width));
-  const comparisonHeight = Math.max(1, Math.max(loadedImages.left.height, loadedImages.right.height));
+  const comparisonWidth = Math.max(1, loadedImages.left.width);
+  const comparisonHeight = Math.max(1, loadedImages.left.height);
 
   setCanvasSize(leftCanvas, comparisonWidth, comparisonHeight);
   setCanvasSize(rightCanvas, comparisonWidth, comparisonHeight);
@@ -97,7 +97,7 @@ function compareImages() {
   copyCanvasSize(leftCanvas, diffCanvas);
   const leftPixels = leftContext.getImageData(0, 0, leftCanvas.width, leftCanvas.height);
   const rightPixels = rightContext.getImageData(0, 0, rightCanvas.width, rightCanvas.height);
-  const diffPixels = diffContext.createImageData(leftPixels.width, leftPixels.height);
+  const diffPixels = new ImageData(leftPixels.width, leftPixels.height);
 
   const threshold = Number(thresholdInput.value);
   let changedPixels = 0;
