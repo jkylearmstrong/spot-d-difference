@@ -34,7 +34,33 @@ function clearCanvas(context, canvas) {
 
 function drawImageToCanvas(image, context, canvas) {
   clearCanvas(context, canvas);
-  context.drawImage(image, 0, 0, canvas.width, canvas.height);
+  const imageAspectRatio = image.width / image.height;
+  const canvasAspectRatio = canvas.width / canvas.height;
+
+  let sourceWidth = image.width;
+  let sourceHeight = image.height;
+  let sourceX = 0;
+  let sourceY = 0;
+
+  if (imageAspectRatio > canvasAspectRatio) {
+    sourceWidth = image.height * canvasAspectRatio;
+    sourceX = (image.width - sourceWidth) / 2;
+  } else if (imageAspectRatio < canvasAspectRatio) {
+    sourceHeight = image.width / canvasAspectRatio;
+    sourceY = (image.height - sourceHeight) / 2;
+  }
+
+  context.drawImage(
+    image,
+    sourceX,
+    sourceY,
+    sourceWidth,
+    sourceHeight,
+    0,
+    0,
+    canvas.width,
+    canvas.height,
+  );
 }
 
 function loadImage(file) {
@@ -80,9 +106,7 @@ function compareImages() {
     const redDifference = Math.abs(leftPixels.data[index] - rightPixels.data[index]);
     const greenDifference = Math.abs(leftPixels.data[index + 1] - rightPixels.data[index + 1]);
     const blueDifference = Math.abs(leftPixels.data[index + 2] - rightPixels.data[index + 2]);
-    const alphaDifference = Math.abs(leftPixels.data[index + 3] - rightPixels.data[index + 3]);
-    const averageDifference =
-      (redDifference + greenDifference + blueDifference + alphaDifference) / 4;
+    const averageDifference = (redDifference + greenDifference + blueDifference) / 3;
 
     if (averageDifference > threshold) {
       diffPixels.data[index] = 255;
