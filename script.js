@@ -11,6 +11,7 @@ const diffCanvas = document.getElementById("diffCanvas");
 const leftContext = leftCanvas.getContext("2d");
 const rightContext = rightCanvas.getContext("2d");
 const diffContext = diffCanvas.getContext("2d");
+const UNCHANGED_PIXEL_ALPHA = 110;
 
 const loadedImages = {
   left: null,
@@ -59,8 +60,8 @@ function compareImages() {
     return;
   }
 
-  const comparisonWidth = Math.max(1, Math.min(loadedImages.left.width, loadedImages.right.width));
-  const comparisonHeight = Math.max(1, Math.min(loadedImages.left.height, loadedImages.right.height));
+  const comparisonWidth = Math.max(1, Math.max(loadedImages.left.width, loadedImages.right.width));
+  const comparisonHeight = Math.max(1, Math.max(loadedImages.left.height, loadedImages.right.height));
 
   setCanvasSize(leftCanvas, comparisonWidth, comparisonHeight);
   setCanvasSize(rightCanvas, comparisonWidth, comparisonHeight);
@@ -93,7 +94,7 @@ function compareImages() {
       diffPixels.data[index] = rightPixels.data[index];
       diffPixels.data[index + 1] = rightPixels.data[index + 1];
       diffPixels.data[index + 2] = rightPixels.data[index + 2];
-      diffPixels.data[index + 3] = 110;
+      diffPixels.data[index + 3] = UNCHANGED_PIXEL_ALPHA;
     }
   }
 
