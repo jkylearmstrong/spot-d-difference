@@ -12,6 +12,7 @@ const leftContext = leftCanvas.getContext("2d");
 const rightContext = rightCanvas.getContext("2d");
 const diffContext = diffCanvas.getContext("2d");
 const UNCHANGED_PIXEL_ALPHA = 110;
+const MAX_COMPARISON_DIMENSION = 800; // cap largest canvas dimension to avoid huge work
 
 const loadedImages = {
   left: null,
@@ -86,8 +87,17 @@ function compareImages() {
     return;
   }
 
-  const comparisonWidth = Math.max(1, loadedImages.left.width);
-  const comparisonHeight = Math.max(1, loadedImages.left.height);
+  // Use the smaller of the two images' dimensions to avoid upscaling, and cap the max dimension
+  const targetWidth = Math.max(1, Math.min(loadedImages.left.width, loadedImages.right.width));
+  const targetHeight = Math.max(1, Math.min(loadedImages.left.height, loadedImages.right.height));
+
+  // Respect aspect ratio by capping the larger dimension to MAX_COMPARISON_DIMENSION
+  const widthScale = MAX_COMPARISON_DIMENSION / targetWidth;
+  const heightScale = MAX_COMPARISON_DIMENSION / targetHeight;
+  const scale = Math.min(1, Math.min(widthScale, heightScale));
+
+  const comparisonWidth = Math.max(1, Math.floor(targetWidth * scale));
+  const comparisonHeight = Math.max(1, Math.floor(targetHeight * scale));
 
   setCanvasSize(leftCanvas, comparisonWidth, comparisonHeight);
   setCanvasSize(rightCanvas, comparisonWidth, comparisonHeight);
@@ -123,7 +133,9 @@ function compareImages() {
   }
 
   diffContext.putImageData(diffPixels, 0, 0);
-  updateStatus(`Detected ${changedPixels.toLocaleString()} changed pixels at threshold ${threshold}.`);
+  const total = leftPixels.width * leftPixels.height || 1;
+  const percent = ((changedPixels / total) * 100).toFixed(2);
+  updateStatus(`Detected ${changedPixels.toLocaleString()} changed pixels (${percent}%) at threshold ${threshold}. Comparison size ${comparisonWidth}×${comparisonHeight}.`);
 }
 
 async function handleFileChange(side, event) {
