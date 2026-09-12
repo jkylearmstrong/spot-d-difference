@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Spot the Difference</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app">
+      <section class="controls">
+        <div class="field-group">
+          <label for="leftImage">Left image</label>
+          <input id="leftImage" type="file" accept="image/*" />
+        </div>
+        <div class="field-group">
+          <label for="rightImage">Right image</label>
+          <input id="rightImage" type="file" accept="image/*" />
+        </div>
+        <div class="field-group">
+          <label for="threshold">Difference threshold: <span id="thresholdValue">40</span></label>
+          <input id="threshold" type="range" min="0" max="255" value="40" />
+        </div>
+        <p id="status">Upload two similar images to compare them.</p>
+      </section>
+
+      <section class="results">
+        <figure class="panel">
+          <figcaption>Left image</figcaption>
+          <canvas id="leftCanvas" width="480" height="320"></canvas>
+        </figure>
+        <figure class="panel">
+          <figcaption>Right image</figcaption>
+          <canvas id="rightCanvas" width="480" height="320"></canvas>
+        </figure>
+        <figure class="panel panel-wide">
+          <figcaption>Highlighted differences</figcaption>
+          <canvas id="diffCanvas" width="480" height="320"></canvas>
+        </figure>
+      </section>
+    </main>
+
+    <script src="./script.js"></script>
+  </body>
+</html>
